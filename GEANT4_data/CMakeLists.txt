@@ -1,0 +1,42 @@
+#----------------------------------------------------------------------------
+# Setup the project
+#
+cmake_minimum_required(VERSION 3.16...3.27)
+project(HPM)
+
+#----------------------------------------------------------------------------
+# Find Geant4 package, activating all available UI and Vis drivers by default
+#
+find_package(Geant4 REQUIRED ui_all vis_all)
+
+#----------------------------------------------------------------------------
+# Locate sources and headers for this project
+#
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+
+#----------------------------------------------------------------------------
+# Add the executable, use our local headers, and link it to the Geant4 libraries
+#
+add_executable(HPM HPM.cc ${sources} ${headers})
+target_include_directories(HPM PRIVATE include)
+target_link_libraries(HPM PRIVATE ${Geant4_LIBRARIES})
+
+#----------------------------------------------------------------------------
+# Copy all scripts to the build directory
+#
+set(MACRO_SCRIPTS
+  gui.mac
+  init_vis.mac
+  vis.mac
+  electrons.mac
+  protons.mac
+  )
+
+foreach(_script ${MACRO_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()

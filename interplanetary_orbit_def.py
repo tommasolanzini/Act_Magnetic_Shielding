@@ -103,7 +103,7 @@ Format = CSV
 $$BEGIN
 """
 
-with open("spenvis_trajectory.txt", "w") as f:
+with open("SPENVIS_data/spenvis_trajectory.txt", "w") as f:
     f.write(header)
     df.to_csv(f, sep=',', index=False, header=False)
     f.write("$$END\n")
