@@ -1,3 +1,4 @@
+/run/initialize
 /gps/particle e-
 /gps/pos/type Surface
 /gps/pos/shape Sphere
@@ -34,4 +35,7 @@
 /gps/hist/point 28.0 226910.0
 /gps/hist/point 30.0 221330.0
 
-/gps/ene/inter Log
+
+/gps/hist/inter Log
+
+/run/beamOn 1000
