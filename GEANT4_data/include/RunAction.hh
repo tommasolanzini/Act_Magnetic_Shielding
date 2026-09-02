@@ -24,16 +24,16 @@
 // ********************************************************************
 //
 /// \file RunAction.hh
-/// \brief Definition of the B2::RunAction class
+/// \brief Definition of the HPM::RunAction class
 
-#ifndef B2RunAction_h
-#define B2RunAction_h 1
+#ifndef HPMRunAction_h
+#define HPMRunAction_h 1
 
 #include "G4UserRunAction.hh"
 
 class G4Run;
 
-namespace B2
+namespace HPM
 {
 
 /// Run action class
@@ -48,6 +48,6 @@ class RunAction : public G4UserRunAction
     void EndOfRunAction(const G4Run* run) override;
 };
 
-}  // namespace B2
+}  // namespace HPM
 
 #endif

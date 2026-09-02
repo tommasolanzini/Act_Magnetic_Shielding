@@ -29,8 +29,8 @@ set(MACRO_SCRIPTS
   gui.mac
   init_vis.mac
   vis.mac
-  electrons.mac
-  protons.mac
+  macros/electrons.mac
+  macros/protons.mac
   )
 
 foreach(_script ${MACRO_SCRIPTS})

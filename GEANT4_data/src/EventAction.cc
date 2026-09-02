@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 /// \file EventAction.cc
-/// \brief Implementation of the B2::EventAction class
+/// \brief Implementation of the HPM::EventAction class
 
 #include "EventAction.hh"
 
@@ -32,7 +32,7 @@
 #include "G4TrajectoryContainer.hh"
 #include "globals.hh"
 
-namespace B2
+namespace HPM
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -64,4 +64,4 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B2
+}  // namespace HPM

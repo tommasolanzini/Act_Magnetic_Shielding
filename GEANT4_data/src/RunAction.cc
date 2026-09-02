@@ -24,13 +24,13 @@
 // ********************************************************************
 //
 /// \file RunAction.cc
-/// \brief Implementation of the B2::RunAction class
+/// \brief Implementation of the HPM::RunAction class
 
 #include "RunAction.hh"
 
 #include "G4RunManager.hh"
 
-namespace B2
+namespace HPM
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -55,4 +55,4 @@ void RunAction::EndOfRunAction(const G4Run*) {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B2
+}  // namespace HPM

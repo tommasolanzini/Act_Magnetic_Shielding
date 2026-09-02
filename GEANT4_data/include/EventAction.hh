@@ -24,16 +24,16 @@
 // ********************************************************************
 //
 /// \file EventAction.hh
-/// \brief Definition of the B2::EventAction class
+/// \brief Definition of the HPM::EventAction class
 
-#ifndef B2EventAction_h
-#define B2EventAction_h 1
+#ifndef HPMEventAction_h
+#define HPMEventAction_h 1
 
 #include "G4UserEventAction.hh"
 
 class G4Event;
 
-namespace B2
+namespace HPM
 {
 
 /// Event action class
@@ -48,6 +48,6 @@ class EventAction : public G4UserEventAction
     void EndOfEventAction(const G4Event*) override;
 };
 
-}  // namespace B2
+}  // namespace HPM
 
 #endif

@@ -1,0 +1,10 @@
+^C:\USERS\TOMMA\ONEDRIVE - DELFT UNIVERSITY OF TECHNOLOGY\TU_DELFT\HONOURS PROGRAMME\ACT_MAGNETIC_SHIELDING\GEANT4_DATA\BUILD\CMAKEFILES\6273E1AA5D3A6E41FF868F41D1D0834D\GENERATE.STAMP.RULE
+setlocal
+C:\Users\tomma\miniconda3\envs\geant4_env\Library\bin\cmake.exe "-SC:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data" "-BC:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data/build/HPM.slnx"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
