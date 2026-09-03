@@ -31,6 +31,7 @@ set(MACRO_SCRIPTS
   vis.mac
   macros/electrons.mac
   macros/protons.mac
+  macros/vis_dipole.mac
   )
 
 foreach(_script ${MACRO_SCRIPTS})

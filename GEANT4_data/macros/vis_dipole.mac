@@ -1,0 +1,25 @@
+# 1. Setup the Viewer
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+/vis/viewer/set/viewpointThetaPhi 60 45
+/vis/viewer/zoom 1.5
+
+# 2. Draw Trajectories (Smooth for magnetic curves)
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/scene/endOfEventAction accumulate
+
+# 3. GPS Setup (Directional planar beam)
+/gps/particle e-
+/gps/energy 5 MeV
+/gps/pos/type Plane
+/gps/pos/shape Square
+/gps/pos/halfx 15 cm
+/gps/pos/halfy 15 cm
+/gps/pos/centre 80. 0. 0. cm
+/gps/direction -1 0 0
+
+# 4. Run a small batch
+/vis/viewer/set/autoRefresh true
+/run/beamOn 50

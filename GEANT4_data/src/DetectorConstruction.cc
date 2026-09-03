@@ -6,6 +6,8 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
+#include "DipoleMagneticField.hh"
+#include "G4UserLimits.hh" // max steps
 
 // Required headers for Magnetic Field physics
 #include "G4UniformMagField.hh"
@@ -32,10 +34,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4Material* pcbMaterial = nist->FindOrBuildMaterial("G4_BAKELITE"); // Proxy for FR4
 
     // 2. World Volume (Expanded to 100 cm to accommodate larger structures)
-    G4double worldSize = 100.0 * cm;
+    G4double worldSize = 200.0 * cm;
     G4Box* solidWorld = new G4Box("World", worldSize/2, worldSize/2, worldSize/2);
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, vacuum, "World");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, checkOverlaps);
+
+    G4UserLimits* worldLimits = new G4UserLimits();
+    worldLimits->SetUserMaxTrackLength(50.0 * m);
+    worldLimits->SetUserMaxTime(10.0 * ms);
+    logicWorld->SetUserLimits(worldLimits);
 
     // 3. The Radiation Vault (Outer Aluminum Shell)
     G4double vaultSize = 20.0 * cm;
@@ -80,14 +87,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 }
 
 void DetectorConstruction::ConstructSDandField() {
-    // ==========================================
-    // 1. ACTIVE MAGNETIC SHIELDING (1.0 TESLA)
-    // ==========================================
-    // Apply a 1.0 Tesla uniform magnetic field along the Y-axis.
-    G4ThreeVector fieldValue(0.0, 1.0 * tesla, 0.0);
-    G4UniformMagField* magField = new G4UniformMagField(fieldValue);
+    // Dipole magnetic shielding
+    DipoleMagneticField* magField = new DipoleMagneticField();
 
-    // Get the global field manager and assign the uniform field to the entire World
     G4FieldManager* globalFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
     globalFieldMgr->SetDetectorField(magField);
     globalFieldMgr->CreateChordFinder(magField);

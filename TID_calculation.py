@@ -11,13 +11,14 @@ def calculate_mission_tid(file_path, particle_type, simulated_particles, spenvis
         print(f"Error: The file '{file_path}' was not found.")
         return None, None
         
-    # NEW LINE: Force the column to be numeric, turning any text into NaN, then drop the NaNs
+    # Force the column to be numeric, turning any text into NaN, then drop the NaNs
     df['Edep_MeV'] = pd.to_numeric(df['Edep_MeV'], errors='coerce').dropna()
     
     total_energy_mev = df['Edep_MeV'].sum()
     
     print(f"Simulated Hits: {len(df)}")
     print(f"Total Energy Deposited: {total_energy_mev:.2e} MeV")
+    
     # 1. Convert to Joules (1 MeV = 1.602e-13 Joules)
     total_energy_joules = total_energy_mev * 1.602e-13
     
@@ -25,7 +26,8 @@ def calculate_mission_tid(file_path, particle_type, simulated_particles, spenvis
     simulated_dose_gy = total_energy_joules / target_mass_kg
     
     # 3. Mission Environment Scaling
-    sphere_radius_cm = 15.0
+    # CRITICAL FIX: The Geant4 spawning sphere was set to 80 cm, NOT 15 cm.
+    sphere_radius_cm = 80.0 
     sphere_area_cm2 = 4 * np.pi * (sphere_radius_cm ** 2)
     
     particles_per_second = spenvis_flux * sphere_area_cm2
@@ -47,31 +49,31 @@ def calculate_mission_tid(file_path, particle_type, simulated_particles, spenvis
 
 
 # SIMULATION PARAMETERS
-
 ELECTRON_FLUX = 1.2569E+10
 PROTON_FLUX = 1.4667E11
-SIMULATED_PARTICLES = 1E6
+
+# UPDATED: Independent simulation counts
+SIMULATED_ELECTRONS = 2E7
+SIMULATED_PROTONS = 100E6
+
 MISSION_DAYS = 30 
-# TARGET_MASS_KG = 0.000466
 TARGET_MASS_KG = 0.22834
 
 
 # EXECUTE CALCULATIONS
-
-# Point these directly to your merged files
 elec_tid, elec_edep = calculate_mission_tid(
-    file_path="GEANT4_data/build/electrons_2_data.csv", 
+    file_path="GEANT4_data/build/electrons_3_data.csv", 
     particle_type="Electrons",
-    simulated_particles=SIMULATED_PARTICLES,
+    simulated_particles=SIMULATED_ELECTRONS,
     spenvis_flux=ELECTRON_FLUX,
     mission_duration_days=MISSION_DAYS,
     target_mass_kg=TARGET_MASS_KG
 )
 
 prot_tid, prot_edep = calculate_mission_tid(
-    file_path="GEANT4_data/build/protons_2_data.csv", 
+    file_path="GEANT4_data/build/protons_3_data.csv", 
     particle_type="Protons",
-    simulated_particles=SIMULATED_PARTICLES,
+    simulated_particles=SIMULATED_PROTONS,
     spenvis_flux=PROTON_FLUX,
     mission_duration_days=MISSION_DAYS,
     target_mass_kg=TARGET_MASS_KG
@@ -79,7 +81,6 @@ prot_tid, prot_edep = calculate_mission_tid(
 
 
 # PLOTTING
-
 if elec_tid is not None and prot_tid is not None:
     print("\nGenerating plots...")
     
@@ -102,7 +103,6 @@ if elec_tid is not None and prot_tid is not None:
     # Add numerical labels on top of the bars
     for bar in bars:
         yval = bar.get_height()
-        # Multiply by 1.3 to push the text up appropriately on a log scale
         plt.text(bar.get_x() + bar.get_width()/2, yval * 1.3, 
                  f"{yval:,.1f} krad", ha='center', va='bottom', fontweight='bold', fontsize=12)
     
@@ -114,7 +114,6 @@ if elec_tid is not None and prot_tid is not None:
 
     # Plot 2: Energy Deposition Histogram
     plt.figure(figsize=(10, 6))
-    # Filter out zero-energy hits for cleaner log plotting
     e_clean = elec_edep[elec_edep > 0]
     p_clean = prot_edep[prot_edep > 0]
     
@@ -123,7 +122,7 @@ if elec_tid is not None and prot_tid is not None:
     plt.hist(p_clean, bins=np.logspace(np.log10(p_clean.min()), np.log10(p_clean.max()), 50), 
              alpha=0.6, label='Protons', color='#d62728', density=True)
     
-    plt.title('Energy Deposition Spectrum per Hit (Passive Baseline)', fontsize=14)
+    plt.title('Energy Deposition Spectrum per Hit', fontsize=14)
     plt.xlabel('Deposited Energy (MeV)', fontsize=12)
     plt.ylabel('Normalized Frequency', fontsize=12)
     plt.xscale('log')

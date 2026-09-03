@@ -3,7 +3,7 @@
 /gps/particle proton
 /gps/pos/type Surface
 /gps/pos/shape Sphere
-/gps/pos/radius 25. cm
+/gps/pos/radius 80. cm
 /gps/pos/centre 0. 0. 0. cm
 /gps/ang/type cos
 
@@ -39,5 +39,5 @@
 
 /gps/hist/inter Log
 
-/run/printProgress 1000
-/run/beamOn 10000
+/run/printProgress 10000000
+/run/beamOn 100000000
