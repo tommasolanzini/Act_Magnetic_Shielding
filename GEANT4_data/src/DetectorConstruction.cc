@@ -1,45 +1,87 @@
 #include "DetectorConstruction.hh"
-
+#include "SensitiveDetector.hh"
+#include "G4NistManager.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4NistManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4SDManager.hh"
 
+// Constructor
 DetectorConstruction::DetectorConstruction()
-: G4VUserDetectorConstruction(), fScoringVolume(nullptr)
+: G4VUserDetectorConstruction(), fLogicAvionics(nullptr)
 {}
 
+// Destructor
 DetectorConstruction::~DetectorConstruction()
 {}
 
-G4VPhysicalVolume* DetectorConstruction::Construct()
-{
+G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4NistManager* nist = G4NistManager::Instance();
+    G4bool checkOverlaps = true;
 
-    // 1. Materiali
-    G4Material* galactic = nist->FindOrBuildMaterial("G4_Galactic"); // Vuoto spaziale
-    G4Material* silicon  = nist->FindOrBuildMaterial("G4_Si");       // Silicio avionica
+    // 1. Materials
+    G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
+    G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
+    G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
+    G4Material* pcbMaterial = nist->FindOrBuildMaterial("G4_BAKELITE"); // Proxy for FR4
 
-    // 2. World Volume (Scatola di 1 m x 1 m x 1 m)
-    G4double world_size = 1.0 * m;
-    G4Box* solidWorld = new G4Box("World", 0.5*world_size, 0.5*world_size, 0.5*world_size);
-    G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, galactic, "World");
-    G4VPhysicalVolume* physWorld = new G4PVPlacement(
-        0, G4ThreeVector(), logicWorld, "World", 0, false, 0, true
-    );
+    // 2. World Volume (Expanded to 100 cm to accommodate larger structures)
+    G4double worldSize = 100.0 * cm;
+    G4Box* solidWorld = new G4Box("World", worldSize/2, worldSize/2, worldSize/2);
+    G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, vacuum, "World");
+    G4VPhysicalVolume* physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, checkOverlaps);
 
-    // 3. Avionics Volume: Cubo 1U (10 cm x 10 cm x 10 cm)
-    G4double u1_size = 10.0 * cm;
-    G4Box* solidAvionics = new G4Box("Avionics1U", 0.5*u1_size, 0.5*u1_size, 0.5*u1_size);
-    G4LogicalVolume* logicAvionics = new G4LogicalVolume(solidAvionics, silicon, "Avionics1U");
+    // 3. The Radiation Vault (Outer Aluminum Shell)
+    G4double vaultSize = 20.0 * cm;
+    G4Box* solidVault = new G4Box("Vault", vaultSize/2, vaultSize/2, vaultSize/2);
+    G4LogicalVolume* logicVault = new G4LogicalVolume(solidVault, aluminum, "Vault");
+    new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
+
+    // 4. Inner Vacuum Cavity (Creates 10 mm thick Aluminum walls)
+    G4double wallThickness = 10.0 * mm;
+    G4double cavitySize = vaultSize - (2 * wallThickness);
+    G4Box* solidCavity = new G4Box("Cavity", cavitySize/2, cavitySize/2, cavitySize/2);
+    G4LogicalVolume* logicCavity = new G4LogicalVolume(solidCavity, vacuum, "Cavity");
+    new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicVault, false, 0, checkOverlaps);
+
+    // 5. Realistic Distributed OBC (5 Boards)
+    G4double pcbXY = 15.0 * cm;
+    G4double pcbZ = 1.6 * mm;
     
-    // Piazzamento del cubo al centro del mondo
-    new G4PVPlacement(
-        0, G4ThreeVector(), logicAvionics, "Avionics1U", logicWorld, false, 0, true
-    );
+    // Silicon distributed over the boards (leaves a 0.5 cm margin around the edges)
+    G4double siXY = 14.0 * cm; 
+    G4double siZ = 1.0 * mm; 
 
-    fScoringVolume = logicAvionics;
+    G4Box* solidPCB = new G4Box("PCB", pcbXY/2, pcbXY/2, pcbZ/2);
+    G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, pcbMaterial, "PCB");
+    
+    G4Box* solidSi = new G4Box("SiLayer", siXY/2, siXY/2, siZ/2);
+    fLogicAvionics = new G4LogicalVolume(solidSi, silicon, "SiLayer"); // The Sensitive Volume
+
+    // Stack 5 boards inside the 18 cm inner cavity
+    G4double spacing = 3.0 * cm; 
+    G4double startZ = -6.0 * cm; // Stack centered at: -6, -3, 0, +3, +6 cm
+    
+    for (int i = 0; i < 5; i++) {
+        G4double zPosPCB = startZ + (i * spacing);
+        G4double zPosSi = zPosPCB + (pcbZ/2) + (siZ/2);
+
+        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, zPosPCB), logicPCB, "PCB_Phys", logicCavity, false, i, checkOverlaps);
+        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, zPosSi), fLogicAvionics, "SiLayer_Phys", logicCavity, false, i, checkOverlaps);
+    }
 
     return physWorld;
+}
+
+void DetectorConstruction::ConstructSDandField() {
+    // Attach the Sensitive Detector ONLY to the inner Silicon volume
+    auto sdManager = G4SDManager::GetSDMpointer();
+    
+    // If your SensitiveDetector is in the HPM namespace, we call it like this:
+    auto sensitiveDetector = new HPM::SensitiveDetector("AvionicsSD");
+    sdManager->AddNewDetector(sensitiveDetector);
+    
+    // Ensure fLogicAvionics is defined in your DetectorConstruction.hh file
+    SetSensitiveDetector(fLogicAvionics, sensitiveDetector);
 }

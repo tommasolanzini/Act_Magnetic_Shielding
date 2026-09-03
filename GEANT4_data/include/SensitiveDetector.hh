@@ -10,7 +10,6 @@ class SensitiveDetector : public G4VSensitiveDetector {
     SensitiveDetector(const G4String& name);
     ~SensitiveDetector() override = default;
 
-    // This function triggers every time a particle takes a step inside your volume
     G4bool ProcessHits(G4Step* step, G4TouchableHistory* history) override;
 };
 
