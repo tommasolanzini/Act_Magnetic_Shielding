@@ -7,6 +7,11 @@
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
 
+// Required headers for Magnetic Field physics
+#include "G4UniformMagField.hh"
+#include "G4FieldManager.hh"
+#include "G4TransportationManager.hh"
+
 // Constructor
 DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction(), fLogicAvionics(nullptr)
@@ -75,6 +80,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 }
 
 void DetectorConstruction::ConstructSDandField() {
+    // ==========================================
+    // 1. ACTIVE MAGNETIC SHIELDING (1.0 TESLA)
+    // ==========================================
+    // Apply a 1.0 Tesla uniform magnetic field along the Y-axis.
+    G4ThreeVector fieldValue(0.0, 1.0 * tesla, 0.0);
+    G4UniformMagField* magField = new G4UniformMagField(fieldValue);
+
+    // Get the global field manager and assign the uniform field to the entire World
+    G4FieldManager* globalFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+    globalFieldMgr->SetDetectorField(magField);
+    globalFieldMgr->CreateChordFinder(magField);
+
+    // ==========================================
+    // 2. SENSITIVE DETECTORS
+    // ==========================================
     // Attach the Sensitive Detector ONLY to the inner Silicon volume
     auto sdManager = G4SDManager::GetSDMpointer();
     
