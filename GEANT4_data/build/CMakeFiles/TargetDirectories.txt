@@ -1,3 +1,0 @@
-C:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data/build/CMakeFiles/HPM.dir
-C:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/tomma/OneDrive - Delft University of Technology/Tu_Delft/Honours Programme/Act_Magnetic_Shielding/GEANT4_data/build/CMakeFiles/ZERO_CHECK.dir
