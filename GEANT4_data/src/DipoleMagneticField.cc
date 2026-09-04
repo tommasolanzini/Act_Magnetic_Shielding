@@ -21,8 +21,9 @@ void DipoleMagneticField::GetFieldValue(const double Point[4], double* Bfield) c
     }
 
     // 2. The Dipole Exterior
-    // We calibrate the magnetic moment 'k' so that B = 1.0 Tesla exactly at r = 15 cm
-    double k = 1.0 * tesla * std::pow(15.0 * cm, 3);
+    // We calibrate the magnetic moment 'k' so that B is equal to peakB exactly at r = 15 cm
+  G4double peakB = 0 * tesla; // PEAK_B_VALUE
+    double k = peakB * std::pow(20.0 * cm, 3);
     double r5 = std::pow(r, 5);
 
     // Dipole equations aligned along the Y-axis

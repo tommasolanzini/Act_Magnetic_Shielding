@@ -40,6 +40,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4VPhysicalVolume* physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, checkOverlaps);
 
     G4UserLimits* worldLimits = new G4UserLimits();
+    worldLimits->SetMaxAllowedStep(1.0 * cm);
     worldLimits->SetUserMaxTrackLength(50.0 * m);
     worldLimits->SetUserMaxTime(10.0 * ms);
     logicWorld->SetUserLimits(worldLimits);

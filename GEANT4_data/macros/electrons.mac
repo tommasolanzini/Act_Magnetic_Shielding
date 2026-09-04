@@ -39,5 +39,5 @@
 
 /gps/hist/inter Log
 
-/run/printProgress 2000000
-/run/beamOn 20000000
+/run/printProgress 1000000
+/run/beamOn 100000000

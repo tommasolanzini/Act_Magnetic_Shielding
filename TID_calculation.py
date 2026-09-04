@@ -53,8 +53,8 @@ ELECTRON_FLUX = 1.2569E+10
 PROTON_FLUX = 1.4667E11
 
 # UPDATED: Independent simulation counts
-SIMULATED_ELECTRONS = 2E7
-SIMULATED_PROTONS = 100E6
+SIMULATED_ELECTRONS = 100000000
+SIMULATED_PROTONS = 100000000
 
 MISSION_DAYS = 30 
 TARGET_MASS_KG = 0.22834
@@ -62,7 +62,7 @@ TARGET_MASS_KG = 0.22834
 
 # EXECUTE CALCULATIONS
 elec_tid, elec_edep = calculate_mission_tid(
-    file_path="GEANT4_data/build/electrons_3_data.csv", 
+    file_path="GEANT4_data/build/electrons_2_data.csv", 
     particle_type="Electrons",
     simulated_particles=SIMULATED_ELECTRONS,
     spenvis_flux=ELECTRON_FLUX,
@@ -71,7 +71,7 @@ elec_tid, elec_edep = calculate_mission_tid(
 )
 
 prot_tid, prot_edep = calculate_mission_tid(
-    file_path="GEANT4_data/build/protons_3_data.csv", 
+    file_path="GEANT4_data/build/protons_2_data.csv", 
     particle_type="Protons",
     simulated_particles=SIMULATED_PROTONS,
     spenvis_flux=PROTON_FLUX,

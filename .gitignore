@@ -24,6 +24,7 @@ Makefile
 *.dylib
 *.obj
 
+
 # ==========================================
 # 3. Geant4 Simulation Outputs
 # ==========================================
@@ -56,6 +57,7 @@ __pycache__/
 venv/
 env/
 geant4_env/
+images/
 
 # ==========================================
 # 6. OS Generated Files
