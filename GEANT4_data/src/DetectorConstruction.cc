@@ -14,6 +14,8 @@
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
 
+#include "G4Tubs.hh" // for cylinder
+
 // Constructor
 DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction(), fLogicAvionics(nullptr)
@@ -45,43 +47,48 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     worldLimits->SetUserMaxTime(10.0 * ms);
     logicWorld->SetUserLimits(worldLimits);
 
-    // 3. The Radiation Vault (Outer Aluminum Shell)
-    G4double vaultSize = 20.0 * cm;
-    G4Box* solidVault = new G4Box("Vault", vaultSize/2, vaultSize/2, vaultSize/2);
+    G4double vaultRadius = 6.1 * cm; 
+    G4double vaultHalfLength = 16 * cm; 
+    G4Tubs* solidVault = new G4Tubs("Vault", 0.0, vaultRadius, vaultHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicVault = new G4LogicalVolume(solidVault, aluminum, "Vault");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
 
-    // 4. Inner Vacuum Cavity (Creates 10 mm thick Aluminum walls)
-    G4double wallThickness = 10.0 * mm;
-    G4double cavitySize = vaultSize - (2 * wallThickness);
-    G4Box* solidCavity = new G4Box("Cavity", cavitySize/2, cavitySize/2, cavitySize/2);
+    // 4. Inner Vacuum Cavity (6 cm radius, 15 cm half-length)
+    G4double cavityRadius = 6.0 * cm;
+    G4double cavityHalfLength = 15.0 * cm;
+    G4Tubs* solidCavity = new G4Tubs("Cavity", 0.0, cavityRadius, cavityHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicCavity = new G4LogicalVolume(solidCavity, vacuum, "Cavity");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicVault, false, 0, checkOverlaps);
-
-    // 5. Realistic Distributed OBC (5 Boards)
-    G4double pcbXY = 15.0 * cm;
-    G4double pcbZ = 1.6 * mm;
+    // 5. Distributed Circular PCBs (Silicon Targets)
+    // Radius rigorously calculated to yield exactly 0.228 kg of Silicon across 10 boards
+    G4double pcbRadius = 5.581 * cm; 
+    G4double pcbHalfThickness = 0.5 * mm; // 1 mm total thickness per board
     
-    // Silicon distributed over the boards (leaves a 0.5 cm margin around the edges)
-    G4double siXY = 14.0 * cm; 
-    G4double siZ = 1.0 * mm; 
-
-    G4Box* solidPCB = new G4Box("PCB", pcbXY/2, pcbXY/2, pcbZ/2);
-    G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, pcbMaterial, "PCB");
+    G4Tubs* solidPCB = new G4Tubs("SolidPCB", 0.0, pcbRadius, pcbHalfThickness, 0.0, 360.0 * deg);
     
-    G4Box* solidSi = new G4Box("SiLayer", siXY/2, siXY/2, siZ/2);
-    fLogicAvionics = new G4LogicalVolume(solidSi, silicon, "SiLayer"); // The Sensitive Volume
-
-    // Stack 5 boards inside the 18 cm inner cavity
-    G4double spacing = 3.0 * cm; 
-    G4double startZ = -6.0 * cm; // Stack centered at: -6, -3, 0, +3, +6 cm
+    // FIX: Assign this to fLogicAvionics instead of logicPCB
+    fLogicAvionics = new G4LogicalVolume(solidPCB, silicon, "LogicPCB");
     
-    for (int i = 0; i < 5; i++) {
-        G4double zPosPCB = startZ + (i * spacing);
-        G4double zPosSi = zPosPCB + (pcbZ/2) + (siZ/2);
-
-        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, zPosPCB), logicPCB, "PCB_Phys", logicCavity, false, i, checkOverlaps);
-        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, zPosSi), fLogicAvionics, "SiLayer_Phys", logicCavity, false, i, checkOverlaps);
+    // Distribute 10 boards evenly along the Z-axis of the 30 cm long cavity
+    int numBoards = 10;
+    G4double spacing = 2.5 * cm; // Distance between the centers of each board
+    
+    // Start positioning from the bottom of the cylinder moving upwards
+    G4double startZ = -11.25 * cm; 
+    
+    for (int i = 0; i < numBoards; i++) {
+        G4double zPos = startZ + (i * spacing); 
+        
+        new G4PVPlacement(
+            nullptr,                    // No rotation
+            G4ThreeVector(0, 0, zPos),  // Position along Z axis
+            fLogicAvionics,             // FIX: Use fLogicAvionics here too!
+            "PhysicalPCB",              // Name
+            logicCavity,                // Mother volume (the vacuum cylinder)
+            false,                      // No boolean operations
+            i,                          // Copy number (0 to 9)
+            checkOverlaps               // Overlap checking
+        );
     }
 
     return physWorld;

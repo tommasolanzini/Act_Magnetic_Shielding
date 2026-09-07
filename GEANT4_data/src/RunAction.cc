@@ -12,7 +12,12 @@ RunAction::RunAction() {
     analysisManager->SetNtupleMerging(true);
     
     analysisManager->CreateNtuple("TID", "Energy Deposition per Event");
+    
+    // Column 0
     analysisManager->CreateNtupleDColumn("Edep_MeV");
+    // Column 1
+    analysisManager->CreateNtupleDColumn("Ekin_MeV"); 
+    
     analysisManager->FinishNtuple();
 }
 

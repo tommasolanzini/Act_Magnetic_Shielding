@@ -11,8 +11,8 @@
 /vis/scene/endOfEventAction accumulate
 
 # 3. GPS Setup (Directional planar beam)
-/gps/particle e-
-/gps/energy 5 MeV
+/gps/particle proton
+/gps/energy 10 MeV
 /gps/pos/type Plane
 /gps/pos/shape Square
 /gps/pos/halfx 15 cm

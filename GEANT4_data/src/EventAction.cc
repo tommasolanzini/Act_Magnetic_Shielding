@@ -1,9 +1,4 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// ... (standard Geant4 header comments) ...
-// ********************************************************************
-//
+
 /// \file EventAction.cc
 /// \brief Implementation of the HPM::EventAction class
 
@@ -20,15 +15,20 @@ EventAction::EventAction() {}
 EventAction::~EventAction() {}
 
 void EventAction::BeginOfEventAction(const G4Event*) {
-    // Reset the energy bucket at the start of every particle shower
+    // Reset both energy buckets at the start of every particle shower
     fEdep = 0.;
+    fEkin = 0.;
 }
 
 void EventAction::EndOfEventAction(const G4Event*) {
-    // If energy was deposited, write it to the CSV file
-    if (fEdep > 0.) {
+    // If the particle interacted with the SD (deposited energy or crossed boundary)
+    if (fEdep > 0. || fEkin > 0.) {
         auto analysisManager = G4AnalysisManager::Instance();
+        
+        // Fill Column 0 (Edep) and Column 1 (Ekin)
         analysisManager->FillNtupleDColumn(0, fEdep);
+        analysisManager->FillNtupleDColumn(1, fEkin);
+        
         analysisManager->AddNtupleRow();
     }
 }

@@ -9,35 +9,38 @@
 
 /gps/ene/type Arb
 /gps/hist/type arb
-/gps/hist/point 0.06 289520000000.0
-/gps/hist/point 0.1 242060000000.0
-/gps/hist/point 0.5 1334700000.0
-/gps/hist/point 0.65 36481000.0
-/gps/hist/point 0.8 19442000.0
-/gps/hist/point 1.0 10965000.0
-/gps/hist/point 1.3 6024900.0
-/gps/hist/point 1.6 3817000.0
-/gps/hist/point 2.0 2245000.0
-/gps/hist/point 3.0 971150.0
-/gps/hist/point 4.0 530030.0
-/gps/hist/point 5.0 298230.0
-/gps/hist/point 6.0 154650.0
-/gps/hist/point 7.0 90140.0
-/gps/hist/point 8.0 77100.0
-/gps/hist/point 9.0 81960.0
-/gps/hist/point 10.0 97326.0
-/gps/hist/point 12.0 137660.0
-/gps/hist/point 14.0 184060.0
-/gps/hist/point 16.0 223340.0
-/gps/hist/point 18.0 244030.0
-/gps/hist/point 20.0 246830.0
-/gps/hist/point 22.0 243290.0
-/gps/hist/point 24.0 238680.0
-/gps/hist/point 26.0 232860.0
-/gps/hist/point 28.0 226910.0
-/gps/hist/point 30.0 221330.0
+/gps/hist/point 0.06 6200300000.0
+/gps/hist/point 0.1 5276000000.0
+/gps/hist/point 0.5 396780000.0
+/gps/hist/point 1.0 57394000.0
+/gps/hist/point 2.0 15142000.0
+/gps/hist/point 3.0 6555200.0
+/gps/hist/point 4.0 4035800.0
+/gps/hist/point 5.0 2951200.0
+/gps/hist/point 6.0 2383200.0
+/gps/hist/point 7.0 2038500.0
+/gps/hist/point 8.0 1799700.0
+/gps/hist/point 9.0 1615600.0
+/gps/hist/point 10.0 1481900.0
+/gps/hist/point 20.0 680680.0
+/gps/hist/point 30.0 268130.0
+/gps/hist/point 40.0 99849.0
+/gps/hist/point 50.0 39595.0
+/gps/hist/point 60.0 17563.0
+/gps/hist/point 70.0 8677.5
+/gps/hist/point 80.0 4694.0
+/gps/hist/point 90.0 2733.2
+/gps/hist/point 100.0 1914.2
+/gps/hist/point 200.0 232.7
+/gps/hist/point 300.0 21.952
+/gps/hist/point 400.0 5.5996
+/gps/hist/point 500.0 2.1166
+/gps/hist/point 600.0 1.0478
+/gps/hist/point 800.0 0.3642
+/gps/hist/point 1000.0 0.17101
+/gps/hist/point 2000.0 0.0
 
 /gps/hist/inter Log
 
 /run/printProgress 1000000
-/run/beamOn 100000000
+/run/beamOn 10000000
