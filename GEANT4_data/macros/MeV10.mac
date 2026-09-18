@@ -1,0 +1,17 @@
+/run/initialize
+
+/gps/particle proton
+/gps/pos/type Surface
+/gps/pos/shape Sphere
+/gps/pos/radius 80. cm
+/gps/pos/centre 0. 0. 0. cm
+/gps/ang/type cos
+
+/gps/ene/type Arb
+/gps/hist/type arb
+/gps/hist/point 5 1
+
+/gps/hist/inter Log
+
+/run/printProgress 1000000
+/run/beamOn 10000000
