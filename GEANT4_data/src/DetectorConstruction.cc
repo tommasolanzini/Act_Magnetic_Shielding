@@ -7,24 +7,17 @@
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
 #include "DipoleMagneticField.hh"
-#include "G4UserLimits.hh" // max steps
+#include "G4UserLimits.hh" 
 
-// Required headers for Magnetic Field physics
 #include "G4UniformMagField.hh"
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
+#include "G4Tubs.hh" 
 
-#include "G4Tubs.hh" // for cylinder
-
-#include "ToroidalMagneticField.hh"
-
-
-// Constructor
 DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction()
 {}
 
-// Destructor
 DetectorConstruction::~DetectorConstruction()
 {}
 
@@ -36,9 +29,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
     G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
     G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
-    G4Material* pcbMaterial = nist->FindOrBuildMaterial("G4_BAKELITE"); // Proxy for FR4
+    G4Material* pcbMaterial = nist->FindOrBuildMaterial("G4_BAKELITE"); 
 
-    // 2. World Volume (Expanded to 100 cm to accommodate larger structures)
+    // 2. World Volume 
     G4double worldSize = 200.0 * cm;
     G4Box* solidWorld = new G4Box("World", worldSize/2, worldSize/2, worldSize/2);
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, vacuum, "World");
@@ -50,25 +43,30 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     worldLimits->SetUserMaxTime(10.0 * ms);
     logicWorld->SetUserLimits(worldLimits);
 
-    G4double vaultRadius = 6.0 * cm; 
-    G4double vaultHalfLength = 3.0 * cm; 
+    // 3. Vault (P SHIELD)
+    G4double vaultRadius = 7.0 * cm; 
+    G4double vaultHalfLength = 4.0 * cm; 
     G4Tubs* solidVault = new G4Tubs("Vault", 0.0, vaultRadius, vaultHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicVault = new G4LogicalVolume(solidVault, aluminum, "Vault");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
 
-
-    // 4. Inner Vacuum Cavity (6 cm radius, 15 cm half-length)
-    G4double cavityRadius = 6.0 * cm;
-    G4double cavityHalfLength = 3.0 * cm;
+    // 4. Inner Vacuum Cavity
+    G4double cavityRadius = 6.5 * cm;
+    G4double cavityHalfLength = 3.5 * cm;
     G4Tubs* solidCavity = new G4Tubs("Cavity", 0.0, cavityRadius, cavityHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicCavity = new G4LogicalVolume(solidCavity, vacuum, "Cavity");
+
+    // WITH P SHIELD
     new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicVault, false, 0, checkOverlaps);
+
+    // NO P SHIELD
+    // new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicWorld, false, 0, checkOverlaps);
 
     G4UserLimits* cavityLimits = new G4UserLimits();
     cavityLimits->SetMaxAllowedStep(0.2 * mm); 
     logicCavity->SetUserLimits(cavityLimits);
+    
     // 5. Distributed Annular PCBs (Størmer-Optimized)
-    // Total Volume = 98.04 cm^3 -> 0.22834 kg of Silicon
     const G4int numBoards = 10;
     G4double pcbHalfThickness = 0.5 * mm; 
     
@@ -97,9 +95,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 }
 
 void DetectorConstruction::ConstructSDandField() {
-    // Dipole magnetic shielding
     DipoleMagneticField* magField = new DipoleMagneticField();
-    // ToroidalMagneticField* magField = new ToroidalMagneticField();
 
     G4FieldManager* globalFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
     globalFieldMgr->SetDetectorField(magField);
@@ -109,7 +105,6 @@ void DetectorConstruction::ConstructSDandField() {
     auto sensitiveDetector = new HPM::SensitiveDetector("AvionicsSD");
     sdManager->AddNewDetector(sensitiveDetector);
     
-    // Attach SD to all 10 PCB rings
     for (auto logicPCB : fLogicPCBs) {
         SetSensitiveDetector(logicPCB, sensitiveDetector);
     }
