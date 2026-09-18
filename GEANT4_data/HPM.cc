@@ -8,6 +8,7 @@
 #include "G4UIExecutive.hh"
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
+#include "G4ScoringManager.hh"
 
 int main(int argc, char** argv)
 {
@@ -26,6 +27,7 @@ int main(int argc, char** argv)
 
   // Set mandatory initialization classes
   runManager->SetUserInitialization(new DetectorConstruction());
+  G4ScoringManager::GetScoringManager();
 
   auto physicsList = new Shielding;
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());

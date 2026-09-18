@@ -35,6 +35,7 @@ set(MACRO_SCRIPTS
   macros/vis_ring.mac
   macros/vis_yz.mac
   macros/MeV10.mac
+  macros/hit_map.mac
   )
 
 foreach(_script ${MACRO_SCRIPTS})

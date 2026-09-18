@@ -1,0 +1,17 @@
+# 1. Multi-Threading & Initialization
+# Adjust this number based on your CPU cores
+/run/numberOfThreads 8
+/run/initialize
+
+# 2. GPS ISOTROPIC SOURCE
+/gps/particle proton
+/gps/pos/type Surface
+/gps/pos/shape Sphere
+/gps/pos/radius 80. cm
+/gps/pos/centre 0. 0. 0. cm
+/gps/ang/type cos
+/gps/energy 30 MeV
+
+# 3. EXECUTION
+/run/printProgress 100000
+/run/beamOn 1000000

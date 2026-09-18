@@ -1,29 +1,17 @@
-#ifndef DetectorConstruction_h
-#define DetectorConstruction_h 1
-
+// Inside DetectorConstruction.hh
 #include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
-#include <vector>
+#include "G4LogicalVolume.hh"
 
-
-class G4VPhysicalVolume;
-class G4LogicalVolume;
-
-class DetectorConstruction : public G4VUserDetectorConstruction
-{
+class DetectorConstruction : public G4VUserDetectorConstruction {
   public:
-
     DetectorConstruction();
     ~DetectorConstruction() override;
 
     G4VPhysicalVolume* Construct() override;
-    
-    // Add this exact line to declare the Sensitive Detector construction
     void ConstructSDandField() override;
 
-
   private:
-    std::vector<G4LogicalVolume*> fLogicPCBs; // I volumi di silicio per calcolare la dose
+    // Remove: std::vector<G4LogicalVolume*> fLogicPCBs;
+    // Add this exact line:
+    G4LogicalVolume* fLogicAvionics; 
 };
-
-#endif
