@@ -16,9 +16,12 @@
 
 #include "G4Tubs.hh" // for cylinder
 
+#include "ToroidalMagneticField.hh"
+
+
 // Constructor
 DetectorConstruction::DetectorConstruction()
-: G4VUserDetectorConstruction(), fLogicAvionics(nullptr)
+: G4VUserDetectorConstruction()
 {}
 
 // Destructor
@@ -47,71 +50,67 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     worldLimits->SetUserMaxTime(10.0 * ms);
     logicWorld->SetUserLimits(worldLimits);
 
-    G4double vaultRadius = 6.1 * cm; 
-    G4double vaultHalfLength = 16 * cm; 
+    G4double vaultRadius = 6.0 * cm; 
+    G4double vaultHalfLength = 3.0 * cm; 
     G4Tubs* solidVault = new G4Tubs("Vault", 0.0, vaultRadius, vaultHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicVault = new G4LogicalVolume(solidVault, aluminum, "Vault");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
 
+
     // 4. Inner Vacuum Cavity (6 cm radius, 15 cm half-length)
     G4double cavityRadius = 6.0 * cm;
-    G4double cavityHalfLength = 15.0 * cm;
+    G4double cavityHalfLength = 3.0 * cm;
     G4Tubs* solidCavity = new G4Tubs("Cavity", 0.0, cavityRadius, cavityHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicCavity = new G4LogicalVolume(solidCavity, vacuum, "Cavity");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicVault, false, 0, checkOverlaps);
-    // 5. Distributed Circular PCBs (Silicon Targets)
-    // Radius rigorously calculated to yield exactly 0.228 kg of Silicon across 10 boards
-    G4double pcbRadius = 5.581 * cm; 
-    G4double pcbHalfThickness = 0.5 * mm; // 1 mm total thickness per board
+
+    G4UserLimits* cavityLimits = new G4UserLimits();
+    cavityLimits->SetMaxAllowedStep(0.2 * mm); 
+    logicCavity->SetUserLimits(cavityLimits);
+    // 5. Distributed Annular PCBs (Størmer-Optimized)
+    // Total Volume = 98.04 cm^3 -> 0.22834 kg of Silicon
+    const G4int numBoards = 10;
+    G4double pcbHalfThickness = 0.5 * mm; 
     
-    G4Tubs* solidPCB = new G4Tubs("SolidPCB", 0.0, pcbRadius, pcbHalfThickness, 0.0, 360.0 * deg);
-    
-    // FIX: Assign this to fLogicAvionics instead of logicPCB
-    fLogicAvionics = new G4LogicalVolume(solidPCB, silicon, "LogicPCB");
-    
-    // Distribute 10 boards evenly along the Z-axis of the 30 cm long cavity
-    int numBoards = 10;
-    G4double spacing = 2.5 * cm; // Distance between the centers of each board
-    
-    // Start positioning from the bottom of the cylinder moving upwards
-    G4double startZ = -11.25 * cm; 
-    
+    G4double zPos[numBoards] = {-20.05*mm, -15.60*mm, -11.14*mm, -6.68*mm, -2.23*mm, 2.23*mm, 6.68*mm, 11.14*mm, 15.60*mm, 20.05*mm};
+    G4double rInner[numBoards] = {14.84*mm, 8.90*mm, 4.90*mm, 2.08*mm, 0.35*mm, 0.35*mm, 2.08*mm, 4.90*mm, 8.90*mm, 14.84*mm};
+    G4double rOuter[numBoards] = {49.82*mm, 54.61*mm, 57.61*mm, 59.37*mm, 60.19*mm, 60.19*mm, 59.37*mm, 57.61*mm, 54.61*mm, 49.82*mm};
+
     for (int i = 0; i < numBoards; i++) {
-        G4double zPos = startZ + (i * spacing); 
+        G4Tubs* solidPCB = new G4Tubs("SolidPCB", rInner[i], rOuter[i], pcbHalfThickness, 0.0, 360.0 * deg);
+        
+        G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, silicon, "LogicPCB");
+        fLogicPCBs.push_back(logicPCB);
         
         new G4PVPlacement(
-            nullptr,                    // No rotation
-            G4ThreeVector(0, 0, zPos),  // Position along Z axis
-            fLogicAvionics,             // FIX: Use fLogicAvionics here too!
-            "PhysicalPCB",              // Name
-            logicCavity,                // Mother volume (the vacuum cylinder)
-            false,                      // No boolean operations
-            i,                          // Copy number (0 to 9)
-            checkOverlaps               // Overlap checking
+            nullptr,                    
+            G4ThreeVector(0, 0, zPos[i]), 
+            logicPCB,             
+            "PhysicalPCB",              
+            logicCavity,                
+            false,                      
+            i,                          
+            checkOverlaps               
         );
     }
-
     return physWorld;
 }
 
 void DetectorConstruction::ConstructSDandField() {
     // Dipole magnetic shielding
     DipoleMagneticField* magField = new DipoleMagneticField();
+    // ToroidalMagneticField* magField = new ToroidalMagneticField();
 
     G4FieldManager* globalFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
     globalFieldMgr->SetDetectorField(magField);
     globalFieldMgr->CreateChordFinder(magField);
 
-    // ==========================================
-    // 2. SENSITIVE DETECTORS
-    // ==========================================
-    // Attach the Sensitive Detector ONLY to the inner Silicon volume
     auto sdManager = G4SDManager::GetSDMpointer();
-    
-    // If your SensitiveDetector is in the HPM namespace, we call it like this:
     auto sensitiveDetector = new HPM::SensitiveDetector("AvionicsSD");
     sdManager->AddNewDetector(sensitiveDetector);
     
-    // Ensure fLogicAvionics is defined in your DetectorConstruction.hh file
-    SetSensitiveDetector(fLogicAvionics, sensitiveDetector);
+    // Attach SD to all 10 PCB rings
+    for (auto logicPCB : fLogicPCBs) {
+        SetSensitiveDetector(logicPCB, sensitiveDetector);
+    }
 }

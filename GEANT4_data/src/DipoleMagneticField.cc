@@ -13,7 +13,7 @@ void DipoleMagneticField::GetFieldValue(const double Point[4], double* Bfield) c
     double r = std::sqrt(x*x + y*y + z*z);
 
     // 1. The Field-Free Interior (Updated to the 7 cm Aluminum Vault)
-    if (r < 6.0 * cm) {
+    if (r < 0.1 * cm) {
         Bfield[0] = 0.0;
         Bfield[1] = 0.0;
         Bfield[2] = 0.0;
@@ -22,8 +22,8 @@ void DipoleMagneticField::GetFieldValue(const double Point[4], double* Bfield) c
 
     // 2. The Dipole Exterior (Aligned to Z-axis)
     // Calibrated to peak exactly at the 7 cm hull boundary
-    G4double peakB = 0.5 * tesla; // Adjust this for your 1T, 2T, etc. tests
-    double k = peakB * std::pow(30.0 * cm, 3); 
+    G4double peakB = 1 * tesla; // Adjust this for your 1T, 2T, etc. tests
+    double k = peakB * std::pow(20.0 * cm, 3); 
     double r5 = std::pow(r, 5);
 
     // Dipole equations aligned along the Z-axis (matching the G4Tubs)

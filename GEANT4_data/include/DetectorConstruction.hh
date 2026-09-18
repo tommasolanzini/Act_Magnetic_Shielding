@@ -3,6 +3,8 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include <vector>
+
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
@@ -21,7 +23,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
 
   private:
-    G4LogicalVolume* fLogicAvionics = nullptr; // Il volume di silicio per calcolare la dose
+    std::vector<G4LogicalVolume*> fLogicPCBs; // I volumi di silicio per calcolare la dose
 };
 
 #endif
