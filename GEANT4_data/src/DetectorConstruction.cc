@@ -52,7 +52,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
 
     // 4. Inner Vacuum Cavity (Creates 10 mm thick Aluminum walls)
-    G4double wallThickness = 10.0 * mm;
+    G4double wallThickness = 20.0 * mm;
     G4double cavitySize = vaultSize - (2 * wallThickness);
     G4Box* solidCavity = new G4Box("Cavity", cavitySize/2, cavitySize/2, cavitySize/2);
     G4LogicalVolume* logicCavity = new G4LogicalVolume(solidCavity, vacuum, "Cavity");
