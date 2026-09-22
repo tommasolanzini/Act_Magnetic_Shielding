@@ -62,7 +62,8 @@ def calculate_mission_tid(file_path, particle_type, simulated_particles, spenvis
 
 # SIMULATION PARAMETERS
 
-PROTON_FLUX = 8.9174E+07	
+# PROTON_FLUX = 8.9174E+07	
+PROTON_FLUX = 5.9311E+08
 ELECTRON_FLUX = 5.9311E+08
 SIMULATED_PROTONS = 10000000
 SIMULATED_ELECTRONS = 10000000
@@ -71,22 +72,23 @@ MISSION_DAYS = 30
 TARGET_MASS_KG = 0.22834
 
 PROTON_FILES = {
-    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_0.csv",
-    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_02.csv",
-    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_05.csv",
-    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_10.csv",
-    "20 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_20.csv"
+    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_0.csv",
+    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_02.csv",
+    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_05.csv",
+    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_10.csv"
+    # "20 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_20.csv"
 
 }
 
 ELECTRON_FILES = {
-    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_0.csv",
-    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_02.csv",
-    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_05.csv",
-    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_10.csv",
-    "20 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_20.csv"
+    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_1_Al_0.csv",
+    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_1_Al_02.csv",
+    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_1_Al_05.csv",
+    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_1_Al_10.csv"
+    # "20 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_20.csv"
 
 }
+
 
 
 # EXECUTE CALCULATIONS
@@ -133,10 +135,12 @@ if any(tid_p) or any(tid_e):
     c_elec = '#1f77b4' # Deep Blue
     
     # Plot side-by-side grouped bars
-    bars_p = ax.bar(x - width/2, tid_p, width, color=c_prot, edgecolor='black', linewidth=1.5, label='Protons')
-    bars_e = ax.bar(x + width/2, tid_e, width, color=c_elec, edgecolor='black', linewidth=1.5, label='Electrons')
+    bars_p = ax.bar(x - width/2, tid_p, width, color=c_prot, edgecolor='black', linewidth=1.5, label='Passive')
+    bars_e = ax.bar(x + width/2, tid_e, width, color=c_elec, edgecolor='black', linewidth=1.5, label='Active')
     
-    ax.set_title('30-Day Jovian Mission Total Dose: Protons vs. Electrons', fontsize=14, pad=15)
+    # ax.set_title('30-Day Jovian Mission Total Dose: Protons vs. Electrons', fontsize=14, pad=15)
+    ax.set_title('30-Day Electron TID: Passive vs. Active (1 T)', fontsize=14, pad=15)
+
     ax.set_ylabel('Total Ionizing Dose (krad)', fontsize=13)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=11)
