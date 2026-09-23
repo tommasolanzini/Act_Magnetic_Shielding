@@ -23,6 +23,7 @@ void DipoleMagneticField::GetFieldValue(const double Point[4], double* Bfield) c
     // 2. The Dipole Exterior (Aligned to Z-axis)
     // Calibrated to peak exactly at the 7 cm hull boundary
     G4double peakB = 2 * tesla; // Adjust this for your 1T, 2T, etc. tests
+
     double k = peakB * std::pow(20.0 * cm, 3); 
     double r5 = std::pow(r, 5);
 

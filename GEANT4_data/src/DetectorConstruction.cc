@@ -38,14 +38,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4VPhysicalVolume* physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, checkOverlaps);
 
     G4UserLimits* worldLimits = new G4UserLimits();
-    worldLimits->SetMaxAllowedStep(1.0 * cm);
-    worldLimits->SetUserMaxTrackLength(50.0 * m);
+    // worldLimits->SetMaxAllowedStep(1.0 * cm);
+    worldLimits->SetUserMaxTrackLength(5.0 * m);
     worldLimits->SetUserMaxTime(10.0 * ms);
     logicWorld->SetUserLimits(worldLimits);
 
     // 3. Vault (P SHIELD)
-    G4double vaultRadius = 7.0 * cm; 
-    G4double vaultHalfLength = 4.0 * cm; 
+    G4double Al_layer_thickness = 0.3 * cm;
+    G4double vaultRadius = 6.5 * cm + Al_layer_thickness; 
+    G4double vaultHalfLength = 3.5 * cm + Al_layer_thickness; 
     G4Tubs* solidVault = new G4Tubs("Vault", 0.0, vaultRadius, vaultHalfLength, 0.0, 360.0 * deg);
     G4LogicalVolume* logicVault = new G4LogicalVolume(solidVault, aluminum, "Vault");
     new G4PVPlacement(nullptr, G4ThreeVector(), logicVault, "Vault", logicWorld, false, 0, checkOverlaps);
@@ -62,9 +63,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     // NO P SHIELD
     // new G4PVPlacement(nullptr, G4ThreeVector(), logicCavity, "Cavity", logicWorld, false, 0, checkOverlaps);
 
-    G4UserLimits* cavityLimits = new G4UserLimits();
-    cavityLimits->SetMaxAllowedStep(0.2 * mm); 
-    logicCavity->SetUserLimits(cavityLimits);
+    // G4UserLimits* cavityLimits = new G4UserLimits();
+    // cavityLimits->SetMaxAllowedStep(0.2 * mm); 
+    // logicCavity->SetUserLimits(cavityLimits);
     
     // 5. Distributed Annular PCBs (Størmer-Optimized)
     const G4int numBoards = 10;

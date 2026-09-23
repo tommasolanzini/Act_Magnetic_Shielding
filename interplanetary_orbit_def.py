@@ -41,15 +41,27 @@ acceleration_models = propagation_setup.create_acceleration_models(
 # 4. Initial State Setup (Highly Elliptical Orbit)
 # Jupiter's radius is ~71,492 km. We set periapsis near 2 R_J (deep in radiation belts)
 # and apoapsis at 15 R_J.
+# 4. Initial State Setup (Circular Orbit at Europa)
 r_jup = 71492e3
 initial_keplerian_elements = np.array([
-    8.5 * r_jup,             # Semi-major axis (a)
-    0.76,                    # Eccentricity (e)
+    9.5 * r_jup,             # Semi-major axis (a) locked at 9.5 R_J
+    0.0,                     # Eccentricity (e) set to 0.0 for a perfect circle
     np.deg2rad(10.0),        # Inclination (i)
     np.deg2rad(0.0),         # Argument of periapsis (omega)
     np.deg2rad(0.0),         # Right ascension of ascending node (RAAN)
     np.deg2rad(0.0)          # True anomaly (theta)
 ])
+
+# initial_keplerian_elements = np.array([
+#     8.5 * r_jup,             # Semi-major axis (a)
+#     0.76,                    # Eccentricity (e)
+#     np.deg2rad(10.0),        # Inclination (i)
+#     np.deg2rad(0.0),         # Argument of periapsis (omega)
+#     np.deg2rad(0.0),         # Right ascension of ascending node (RAAN)
+#     np.deg2rad(0.0)          # True anomaly (theta)
+# ])
+
+
 mu_jupiter = bodies.get("Jupiter").gravitational_parameter
 initial_state = element_conversion.keplerian_to_cartesian(
     initial_keplerian_elements, mu_jupiter)
@@ -103,7 +115,7 @@ Format = CSV
 $$BEGIN
 """
 
-with open("SPENVIS_data/spenvis_trajectory.txt", "w") as f:
+with open("SPENVIS_data/spenvis_trajectory2.txt", "w") as f:
     f.write(header)
     df.to_csv(f, sep=',', index=False, header=False)
     f.write("$$END\n")

@@ -62,29 +62,33 @@ def calculate_mission_tid(file_path, particle_type, simulated_particles, spenvis
 
 # SIMULATION PARAMETERS
 
-PROTON_FLUX = 8.9174E+07	
-ELECTRON_FLUX = 5.9311E+08
-SIMULATED_PROTONS = 10000000
-SIMULATED_ELECTRONS = 10000000
+# PROTON_FLUX = 8.9174E+07	
+# ELECTRON_FLUX = 5.9311E+08
+
+ELECTRON_FLUX = 1.2569E+10  
+PROTON_FLUX = 1.4667E+11
+
+SIMULATED_PROTONS = 20000000
+SIMULATED_ELECTRONS = 20000000
 
 MISSION_DAYS = 30 
 TARGET_MASS_KG = 0.22834
 
 PROTON_FILES = {
-    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_0.csv",
-    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_02.csv",
-    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_05.csv",
-    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_10.csv",
-    "20 mm Al": "GEANT4_data/build/T_sweep/cubic/P_T_0_Al_20.csv"
+    "0 mm Al": "GEANT4_data/build/T_sweep/pay2/P2_T_0_Al_0.csv",
+    "1 mm Al": "GEANT4_data/build/T_sweep/pay2/P2_T_0_Al_01.csv",
+    "2 mm Al": "GEANT4_data/build/T_sweep/pay2/P2_T_0_Al_02.csv",
+    "3 mm Al": "GEANT4_data/build/T_sweep/pay2/P2_T_0_Al_03.csv",
+    "5 mm Al": "GEANT4_data/build/T_sweep/pay2/P2_T_0_Al_05.csv"
 
 }
 
 ELECTRON_FILES = {
-    "0 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_0.csv",
-    "2 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_02.csv",
-    "5 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_05.csv",
-    "10 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_10.csv",
-    "20 mm Al": "GEANT4_data/build/T_sweep/cubic/E_T_0_Al_20.csv"
+    "0 mm Al": "GEANT4_data/build/T_sweep/pay2/E2_T_0_Al_0.csv",
+    "1 mm Al": "GEANT4_data/build/T_sweep/pay2/E2_T_0_Al_01.csv",
+    "2 mm Al": "GEANT4_data/build/T_sweep/pay2/E2_T_0_Al_02.csv",
+    "3 mm Al": "GEANT4_data/build/T_sweep/pay2/E2_T_0_Al_03.csv",
+    "5 mm Al": "GEANT4_data/build/T_sweep/pay2/E2_T_0_Al_05.csv"
 
 }
 

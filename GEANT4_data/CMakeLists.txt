@@ -35,6 +35,8 @@ set(MACRO_SCRIPTS
   macros/vis_ring.mac
   macros/vis_yz.mac
   macros/MeV10.mac
+  macros/protons2.mac
+  macros/electrons2.mac
   )
 
 foreach(_script ${MACRO_SCRIPTS})

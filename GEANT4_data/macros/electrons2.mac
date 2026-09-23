@@ -1,0 +1,43 @@
+/run/initialize
+
+/gps/particle e-
+/gps/pos/type Surface
+/gps/pos/shape Sphere
+/gps/pos/radius 80. cm
+/gps/pos/centre 0. 0. 0. cm
+/gps/ang/type cos
+
+/gps/ene/type Arb
+/gps/hist/type arb
+/gps/hist/point 0.06 2.8952e11
+/gps/hist/point 0.1 2.4206e11
+/gps/hist/point 0.5 1.3347e09
+/gps/hist/point 0.65 3.6481e07
+/gps/hist/point 0.8 1.9442e07
+/gps/hist/point 1.0 1.0965e07
+/gps/hist/point 1.3 6.0249e06
+/gps/hist/point 1.6 3.8170e06
+/gps/hist/point 2.0 2.2450e06
+/gps/hist/point 3.0 9.7115e05
+/gps/hist/point 4.0 5.3003e05
+/gps/hist/point 5.0 2.9823e05
+/gps/hist/point 6.0 1.5465e05
+/gps/hist/point 7.0 9.0140e04
+/gps/hist/point 8.0 7.7100e04
+/gps/hist/point 9.0 8.1960e04
+/gps/hist/point 10.0 9.7326e04
+/gps/hist/point 12.0 1.3766e05
+/gps/hist/point 14.0 1.8406e05
+/gps/hist/point 16.0 2.2334e05
+/gps/hist/point 18.0 2.4403e05
+/gps/hist/point 20.0 2.4683e05
+/gps/hist/point 22.0 2.4329e05
+/gps/hist/point 24.0 2.3868e05
+/gps/hist/point 26.0 2.3286e05
+/gps/hist/point 28.0 2.2691e05
+/gps/hist/point 30.0 2.2133e05
+
+/gps/hist/inter Log
+
+/run/printProgress 2000000
+/run/beamOn 20000000
