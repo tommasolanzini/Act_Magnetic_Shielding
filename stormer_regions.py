@@ -20,11 +20,12 @@ plt.rcParams.update({
 })
 
 # 1. CONSTANTS & PARAMETERS
+m_e = 9.1093837015e-31
 q, m_p, mu0, MeV_to_J = 1.602176634e-19, 1.67262192369e-27, 4 * np.pi * 1e-7, 1.602176634e-13
-E_MeV, B0, r_ref = 40.0, 2.0, 0.20
+E_MeV, B0, r_ref = 50.0, 0.10, 0.20
 
 # 2. MAGNETIC RIGIDITY & STORMER LENGTH
-p = np.sqrt(2 * m_p * E_MeV * MeV_to_J)
+p = np.sqrt(2 * m_e * E_MeV * MeV_to_J)
 M = B0 * 4 * np.pi * r_ref**3 / mu0
 C_St = np.sqrt(mu0 * M / (4 * np.pi * (p / q)))
 
@@ -82,7 +83,7 @@ energies_array = np.linspace(1, 150, 150) # Da 1 MeV a 150 MeV
 volumes_cm3 = []
 
 for E in energies_array:
-    p_E = np.sqrt(2 * m_p * E * MeV_to_J)
+    p_E = np.sqrt(2 * m_e * E * MeV_to_J)
     C_St_E = np.sqrt(mu0 * M / (4 * np.pi * (p_E / q)))
     
     r_b_E = (C_St_E * np.cos(lam_b)**2) / (1 + np.sqrt(1 + np.cos(lam_b)**3))
@@ -130,5 +131,4 @@ ax2.grid(True, which="major", ls=":", alpha=0.5, color='gray')
 ax2.legend(fontsize=11)
 
 plt.tight_layout()
-plt.savefig('Stormer_Analysis.pdf', format='pdf', dpi=300, bbox_inches='tight')
 plt.show()

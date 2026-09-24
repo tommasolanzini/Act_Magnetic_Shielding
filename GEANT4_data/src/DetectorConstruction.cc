@@ -44,7 +44,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     logicWorld->SetUserLimits(worldLimits);
 
     // 3. Vault (P SHIELD)
-    G4double Al_layer_thickness = 0.3 * cm;
+    G4double Al_layer_thickness = 0.5 * cm;
     G4double vaultRadius = 6.5 * cm + Al_layer_thickness; 
     G4double vaultHalfLength = 3.5 * cm + Al_layer_thickness; 
     G4Tubs* solidVault = new G4Tubs("Vault", 0.0, vaultRadius, vaultHalfLength, 0.0, 360.0 * deg);

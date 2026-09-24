@@ -10,33 +10,26 @@
 /gps/ene/type Arb
 /gps/hist/type arb
 
-/gps/hist/point 0.6 2.1827e11
-/gps/hist/point 1.0 1.2729e11
-/gps/hist/point 2.0 1.1726e10
-/gps/hist/point 3.0 9.5655e09
-/gps/hist/point 4.0 8.6148e09
-/gps/hist/point 5.0 7.3499e09
-/gps/hist/point 6.0 6.0667e09
-/gps/hist/point 7.0 4.9327e09
-/gps/hist/point 8.0 4.0350e09
-/gps/hist/point 9.0 3.3256e09
-/gps/hist/point 10.0 2.8607e09
-/gps/hist/point 20.0 6.7968e08
-/gps/hist/point 30.0 4.8172e07
-/gps/hist/point 40.0 3.0394e06
-/gps/hist/point 50.0 2.4628e05
-/gps/hist/point 60.0 1.0601e05
-/gps/hist/point 70.0 5.7122e04
-/gps/hist/point 80.0 3.3408e04
-/gps/hist/point 90.0 2.0662e04
-/gps/hist/point 100.0 1.4951e04
-/gps/hist/point 200.0 1.8925e03
-/gps/hist/point 300.0 1.1617e02
-/gps/hist/point 400.0 1.4239e01
-/gps/hist/point 500.0 2.2196e00
-/gps/hist/point 600.0 1.0038e00
-/gps/hist/point 700.0 1.2393e00
-/gps/hist/point 800.0 4.1784e-01
+/gps/hist/point 0.6 1.1043e08
+/gps/hist/point 1.0 6.6954e07
+/gps/hist/point 2.0 7.2679e06
+/gps/hist/point 3.0 1.2660e06
+/gps/hist/point 4.0 4.3572e05
+/gps/hist/point 5.0 2.0063e05
+/gps/hist/point 6.0 1.0900e05
+/gps/hist/point 7.0 6.5937e04
+/gps/hist/point 8.0 4.3019e04
+/gps/hist/point 9.0 2.9685e04
+/gps/hist/point 10.0 2.3109e04
+/gps/hist/point 20.0 4.5561e03
+/gps/hist/point 30.0 8.1301e02
+/gps/hist/point 40.0 2.0089e02
+/gps/hist/point 50.0 5.5691e01
+/gps/hist/point 60.0 1.7641e01
+/gps/hist/point 70.0 6.3897e00
+/gps/hist/point 80.0 2.6027e00
+/gps/hist/point 90.0 1.1693e00
+
 
 /gps/hist/inter Log
 

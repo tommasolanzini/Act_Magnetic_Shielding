@@ -29,8 +29,8 @@ set(MACRO_SCRIPTS
   gui.mac
   init_vis.mac
   vis.mac
-  macros/electrons.mac
-  macros/protons.mac
+  macros/electrons1.mac
+  macros/protons1.mac
   macros/vis_dipole.mac
   macros/vis_ring.mac
   macros/vis_yz.mac
