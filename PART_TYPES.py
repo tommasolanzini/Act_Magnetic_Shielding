@@ -29,11 +29,9 @@ def analyze_particle_contributions(csv_file):
         print(f"Error: File '{csv_file}' not found.")
         return
 
-    # --- THE FIX: Force numeric conversion and drop text/NaN rows ---
     for col in columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
     df = df.dropna()
-    # ----------------------------------------------------------------
 
     # Sum the deposited energy across the entire simulation
     tot_edep = df['Total_Edep_MeV'].sum()
@@ -66,9 +64,9 @@ def analyze_particle_contributions(csv_file):
         percentage = (en / tot_edep) * 100
         print(f" - {cat}: {en:.2e} MeV ({percentage:.1f}%)")
 
-    # ==========================================
+    
     # PLOTTING THE PIE CHART
-    # ==========================================
+    
     fig, ax = plt.subplots(figsize=(8, 6))
     
     wedges, texts, autotexts = ax.pie(
@@ -91,8 +89,5 @@ def analyze_particle_contributions(csv_file):
     fig.savefig('Particle_Dose_Breakdown.pdf', format='pdf', dpi=300, bbox_inches='tight')
     plt.show()
 
-# EXECUTE
-
-# Simply point this to any of your newly generated Geant4 CSVs
 TARGET_CSV = "GEANT4_data/build/T_sweep/Brem_search/P1_T_20_Al_05_4x.csv" 
 analyze_particle_contributions(TARGET_CSV)

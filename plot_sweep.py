@@ -37,12 +37,10 @@ def calculate_mission_tid(file_path, simulated_particles, spenvis_flux, mission_
 PROTON_FLUX = 1.4667E11
 ELECTRON_FLUX = 1.2569E+10
 
-# Note: Ensure these match the exact beamOn numbers used in your Geant4 macros!
 SIMULATED_PROTONS = 1E7
 SIMULATED_ELECTRONS = 1E7 
 
 MISSION_DAYS = 30 
-# IMPORTANT: Verify this mass reflects your current Aluminum vault thickness
 TARGET_MASS_KG = 0.22834 
 
 tesla_values = ["0", "01", "02", "03", "05", "07", "1"]

@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ==========================================
-# 0. STILE GRAFICO ACCADEMICO
-# ==========================================
 plt.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Computer Modern", "DejaVu Serif"],
@@ -22,10 +19,12 @@ plt.rcParams.update({
 # 1. CONSTANTS & PARAMETERS
 m_e = 9.1093837015e-31
 q, m_p, mu0, MeV_to_J = 1.602176634e-19, 1.67262192369e-27, 4 * np.pi * 1e-7, 1.602176634e-13
-E_MeV, B0, r_ref = 50.0, 0.10, 0.20
+E_MeV, B0, r_ref = 30.0, 0.02, 0.97
+
+m_part = m_p
 
 # 2. MAGNETIC RIGIDITY & STORMER LENGTH
-p = np.sqrt(2 * m_e * E_MeV * MeV_to_J)
+p = np.sqrt(2 * m_part * E_MeV * MeV_to_J)
 M = B0 * 4 * np.pi * r_ref**3 / mu0
 C_St = np.sqrt(mu0 * M / (4 * np.pi * (p / q)))
 
@@ -83,7 +82,7 @@ energies_array = np.linspace(1, 150, 150) # Da 1 MeV a 150 MeV
 volumes_cm3 = []
 
 for E in energies_array:
-    p_E = np.sqrt(2 * m_e * E * MeV_to_J)
+    p_E = np.sqrt(2 * m_part * E * MeV_to_J)
     C_St_E = np.sqrt(mu0 * M / (4 * np.pi * (p_E / q)))
     
     r_b_E = (C_St_E * np.cos(lam_b)**2) / (1 + np.sqrt(1 + np.cos(lam_b)**3))
@@ -93,9 +92,6 @@ for E in energies_array:
     vol_m3 = np.abs(np.pi * np.trapz((rho_b_E[idx_E])**2, z_b_E[idx_E]))
     volumes_cm3.append(vol_m3 * 1e6) 
 
-# ==========================================
-# 8. PLOTS
-# ==========================================
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
 # Subplot 1: Trasmissione Penombra

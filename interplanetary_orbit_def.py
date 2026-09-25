@@ -120,7 +120,6 @@ with open("SPENVIS_data/spenvis_trajectory2.txt", "w") as f:
     df.to_csv(f, sep=',', index=False, header=False)
     f.write("$$END\n")
 
-print("Trajectory formattata correttamente in CSV per SPENVIS!")
 
 plt.figure(figsize=(10, 8))
 plt.plot(x_list, y_list, label='Spacecraft Trajectory', color='blue')

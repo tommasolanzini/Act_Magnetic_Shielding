@@ -48,10 +48,11 @@ FLUX_O1_E = 1.2569E+10 # Deep Capture Electrons
 FLUX_O2_P = 5.1308E+07 # Outer Orbit Protons
 FLUX_O2_E = 3.2429E+08 # Outer Orbit Electrons
 
-THICKNESSES = [0, 1, 2, 3, 5, 10]
+THICKNESSES = [0, 3, 5, 10, 100, 200]
 
 # FILE PATHS: Update with actual GEANT4 CSV paths
 # Orbit 1 (Deep Capture)
+path2 = "GEANT4_data/build/T_sweep/Brem_search/"
 path = "GEANT4_data/build/T_sweep/stormer_pay/"
 O1_P_PASS_FILES = [f"{path}P1_T_00_Al_00.csv", f"{path}P1_T_00_Al_01.csv", f"{path}P1_T_00_Al_02.csv",
                    f"{path}P1_T_00_Al_03.csv", f"{path}P1_T_00_Al_05.csv", f"{path}P1_T_00_Al_10.csv"]
@@ -65,8 +66,8 @@ O1_E_PASS_FILES = [f"{path}E1_T_00_Al_00.csv", f"{path}E1_T_00_Al_01.csv", f"{pa
 # Orbit 2 (Outer Phase)
 O2_P_PASS_FILES = [f"{path}P2_T_00_Al_00.csv", f"{path}P2_T_00_Al_01.csv", f"{path}P2_T_00_Al_02.csv", 
                    f"{path}P2_T_00_Al_03.csv", f"{path}P2_T_00_Al_05.csv", f"{path}P2_T_00_Al_10.csv"]
-O2_E_PASS_FILES = [f"{path}E2_T_00_Al_00.csv", f"{path}E2_T_00_Al_01.csv", f"{path}E2_T_00_Al_02.csv", 
-                   f"{path}E2_T_00_Al_03.csv", f"{path}E2_T_00_Al_05.csv", f"{path}E2_T_00_Al_10.csv"]
+O2_E_PASS_FILES = [f"{path}E2_T_00_Al_00.csv", f"{path}E2_T_00_Al_03.csv", f"{path}E2_T_00_Al_05.csv", 
+                   f"{path}E2_T_00_Al_10.csv", f"{path2}E2_T_00_Al_100.csv", f"{path2}E2_T_00_Al_200.csv"]
 # O2_P_ACT_FILES = [f"{path}P2_T_1_Al_00.csv", f"{path}P2_T_1_Al_01.csv", f"{path}P2_T_1_Al_03.csv", 
 #                    f"{path}P2_T_1_Al_05.csv", f"{path}P2_T_1_Al_10.csv"]
 # O2_E_ACT_FILES = [f"{path}E2_T_1_Al_00.csv", f"{path}E2_T_1_Al_01.csv", f"{path}E2_T_1_Al_03.csv", 
