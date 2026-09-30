@@ -19,9 +19,13 @@ plt.rcParams.update({
 
 
 def calculate_mission_tid(file_path, simulated_particles, spenvis_flux,
-                          mission_duration_days, target_mass_kg):
+                          mission_duration_days, target_mass_kg, n_batches=10):
     try:
-        df = pd.read_csv(file_path, comment="#", names=["Ekin_MeV", "Edep_MeV"])
+        df = pd.read_csv(
+            file_path,
+            comment="#",
+            names=["Ekin_MeV", "Edep_MeV"]
+        )
     except FileNotFoundError:
         print(f"Error: '{file_path}' was not found.")
         return None, None
@@ -30,26 +34,69 @@ def calculate_mission_tid(file_path, simulated_particles, spenvis_flux,
     df["Edep_MeV"] = pd.to_numeric(df["Edep_MeV"], errors="coerce")
     df = df.dropna()
 
-    # Calculate total energy and its standard deviation (MC error: sqrt(sum of squares))
-    edep_joules = df["Edep_MeV"] * 1.602176634e-13
-    total_energy_joules = edep_joules.sum()
-    std_energy_joules = np.sqrt((edep_joules**2).sum())
+    if len(df) < n_batches:
+        raise ValueError(
+            f"Not enough scored entries in '{file_path}' for "
+            f"{n_batches} batches."
+        )
 
-    simulated_dose_gy = total_energy_joules / target_mass_kg
-    std_simulated_dose_gy = std_energy_joules / target_mass_kg
+    # Keep the original data treatment. The scored energy-deposition entries
+    # are divided into batches only for the statistical uncertainty estimate.
+    # Split sicuro mantenendo il formato DataFrame
+    batch_indices = np.array_split(range(len(df)), n_batches)
+    batches = [df.iloc[idx] for idx in batch_indices]
 
     sphere_radius_cm = 80.0
     sphere_area_cm2 = np.pi * sphere_radius_cm**2
     mission_seconds = mission_duration_days * 24 * 3600
-    total_mission_particles = spenvis_flux * sphere_area_cm2 * mission_seconds
+    total_mission_particles = (
+        spenvis_flux * sphere_area_cm2 * mission_seconds
+    )
 
-    scaling_factor = total_mission_particles / simulated_particles
-    
-    mission_tid_gy = simulated_dose_gy * scaling_factor
-    std_mission_tid_gy = std_simulated_dose_gy * scaling_factor
+    # Each batch is treated as 1/n_batches of the original simulation.
+    # Its TID is therefore rescaled to the full mission exposure.
+    particles_per_batch = simulated_particles / n_batches
+    scaling_factor = total_mission_particles / particles_per_batch
 
-    # Return TID and its Standard Deviation in krad
-    return mission_tid_gy * 0.1, std_mission_tid_gy * 0.1
+    batch_tids_krad = []
+
+    for batch in batches:
+        energy_joules = (
+            batch["Edep_MeV"].sum() * 1.602176634e-13
+        )
+
+        simulated_dose_gy = energy_joules / target_mass_kg
+        mission_tid_gy = simulated_dose_gy * scaling_factor
+        batch_tids_krad.append(mission_tid_gy * 0.1)
+
+    batch_tids_krad = np.asarray(batch_tids_krad)
+
+    mean_tid_krad = np.mean(batch_tids_krad)
+
+    if n_batches > 1:
+        standard_error_krad = (
+            np.std(batch_tids_krad, ddof=1) / np.sqrt(n_batches)
+        )
+    else:
+        standard_error_krad = 0.0
+
+    relative_uncertainty = (
+        standard_error_krad / mean_tid_krad
+        if mean_tid_krad > 0
+        else np.nan
+    )
+
+    print(
+        f"TID = {mean_tid_krad:.4g} krad, "
+        f"MC batch uncertainty = {standard_error_krad:.4g} krad"
+    )
+    if np.isfinite(relative_uncertainty):
+        print(
+            f"Relative uncertainty = "
+            f"{100.0 * relative_uncertainty:.3f}%"
+        )
+
+    return mean_tid_krad, standard_error_krad
 
 
 ELECTRON_FLUX = 3.2429E+08
@@ -58,6 +105,7 @@ SIMULATED_ELECTRONS = 20000000
 SIMULATED_PROTONS = 100000000
 MISSION_DAYS = 30
 TARGET_MASS_KG = 0.22834
+N_BATCHES = 10
 
 # Orbit 1: proton environment
 ORBIT1_PROTON_FILES = {
@@ -93,14 +141,14 @@ x_2 = [dipole_moment(b) for b in b_values_2]
 # Unpack the tuples returned by the updated function
 results_1 = [calculate_mission_tid(
     ORBIT1_PROTON_FILES[b], SIMULATED_PROTONS, PROTON_FLUX,
-    MISSION_DAYS, TARGET_MASS_KG
+    MISSION_DAYS, TARGET_MASS_KG, N_BATCHES
 ) for b in b_values_1]
 tid_1 = [res[0] for res in results_1]
 std_1 = [res[1] for res in results_1]
 
 results_2 = [calculate_mission_tid(
     ORBIT2_ELECTRON_FILES[b], SIMULATED_ELECTRONS, ELECTRON_FLUX,
-    MISSION_DAYS, TARGET_MASS_KG
+    MISSION_DAYS, TARGET_MASS_KG, N_BATCHES
 ) for b in b_values_2]
 tid_2 = [res[0] for res in results_2]
 std_2 = [res[1] for res in results_2]
