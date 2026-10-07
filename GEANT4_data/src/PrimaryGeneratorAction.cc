@@ -15,7 +15,6 @@
 namespace HPM
 {
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 {
@@ -33,14 +32,12 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   // fParticleGun->SetParticleEnergy(3.0 * GeV);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
   delete fParticleSource;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
@@ -69,6 +66,5 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   fParticleSource->GeneratePrimaryVertex(event);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 }  // namespace HPM

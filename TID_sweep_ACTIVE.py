@@ -21,18 +21,23 @@ plt.rcParams.update({
 def calculate_mission_tid(file_path, simulated_particles, spenvis_flux,
                           mission_duration_days, target_mass_kg, n_batches=10):
     try:
-        df = pd.read_csv(
-            file_path,
-            comment="#",
-            names=["Ekin_MeV", "Edep_MeV"]
-        )
+        df = pd.read_csv(file_path, comment="#")
+        df.columns = df.columns.str.strip()
     except FileNotFoundError:
         print(f"Error: '{file_path}' was not found.")
         return None, None
 
-    df["Ekin_MeV"] = pd.to_numeric(df["Ekin_MeV"], errors="coerce")
-    df["Edep_MeV"] = pd.to_numeric(df["Edep_MeV"], errors="coerce")
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
     df = df.dropna()
+
+    if 'Total_Edep_MeV' in df.columns:
+        edep_col = 'Total_Edep_MeV'
+    elif 'Edep_MeV' in df.columns:
+        edep_col = 'Edep_MeV'
+    else:
+        edep_col = df.columns[0]
+
 
     if len(df) < n_batches:
         raise ValueError(
@@ -40,8 +45,6 @@ def calculate_mission_tid(file_path, simulated_particles, spenvis_flux,
             f"{n_batches} batches."
         )
 
-    # Keep the original data treatment. The scored energy-deposition entries
-    # are divided into batches only for the statistical uncertainty estimate.
     # Split sicuro mantenendo il formato DataFrame
     batch_indices = np.array_split(range(len(df)), n_batches)
     batches = [df.iloc[idx] for idx in batch_indices]
@@ -61,8 +64,9 @@ def calculate_mission_tid(file_path, simulated_particles, spenvis_flux,
     batch_tids_krad = []
 
     for batch in batches:
+        # Somma l'energia depositata usando la colonna rilevata dinamicamente
         energy_joules = (
-            batch["Edep_MeV"].sum() * 1.602176634e-13
+            batch[edep_col].sum() * 1.602176634e-13
         )
 
         simulated_dose_gy = energy_joules / target_mass_kg
@@ -109,22 +113,22 @@ N_BATCHES = 10
 
 # Orbit 1: proton environment
 ORBIT1_PROTON_FILES = {
-    0.0: "GEANT4_data/build/T_sweep/stormer_pay/P1_T_00_Al_05.csv",
-    # 0.1: "GEANT4_data/build/T_sweep/cubic/P1_T_01_Al_05.csv",
-    0.2: "GEANT4_data/build/T_sweep/stormer_pay/P1_T_02_Al_05.csv",
-    # 0.3: "GEANT4_data/build/T_sweep/cubic/P1_T_03_Al_05.csv",
-    0.5: "GEANT4_data/build/T_sweep/stormer_pay/P1_T_05_Al_05.csv",
-    1.0: "GEANT4_data/build/T_sweep/stormer_pay/P1_T_10_Al_05.csv",
-    2.0: "GEANT4_data/build/T_sweep/stormer_pay/P1_T_20_Al_05.csv",
+    0.0: "build/T_sweep/stormer_pay/P1_T_00_Al_05.csv",
+    # 0.1: "build/T_sweep/cubic/P1_T_01_Al_05.csv",
+    0.2: "build/T_sweep/stormer_pay/P1_T_02_Al_05.csv",
+    # 0.3: "build/T_sweep/cubic/P1_T_03_Al_05.csv",
+    0.5: "build/T_sweep/stormer_pay/P1_T_05_Al_05.csv",
+    1.0: "build/T_sweep/stormer_pay/P1_T_10_Al_05.csv",
+    2.0: "build/T_sweep/stormer_pay/P1_T_20_Al_05.csv",
 }
 
 # Orbit 2: electron environment
 ORBIT2_ELECTRON_FILES = {
-    0.0: "GEANT4_data/build/T_sweep/stormer_pay/E2_T_00_Al_05.csv",
-    0.2: "GEANT4_data/build/T_sweep/stormer_pay/E2_T_02_Al_05.csv",
-    0.5: "GEANT4_data/build/T_sweep/stormer_pay/E2_T_05_Al_05.csv",
-    1.0: "GEANT4_data/build/T_sweep/stormer_pay/E2_T_10_Al_05.csv",
-    2.0: "GEANT4_data/build/T_sweep/stormer_pay/E2_T_20_Al_05.csv",
+    0.0: "build/T_sweep/stormer_pay/E2_T_00_Al_05.csv",
+    0.2: "build/T_sweep/stormer_pay/E2_T_02_Al_05.csv",
+    0.5: "build/T_sweep/stormer_pay/E2_T_05_Al_05.csv",
+    1.0: "build/T_sweep/Brem_search/E2_T_10_Al_05_SC.csv",
+    2.0: "build/T_sweep/Brem_search/E2_T_20_Al_05_SC.csv",
 }
 
 radius_m = 0.20
@@ -180,6 +184,10 @@ plt.show()
 fig2, ax2 = plt.subplots(figsize=(6, 4.8))
 
 # Styled for scientific publication
+# Divide the last two values by 100 for the electron sweep plot
+tid_2[-2:] = [val / 100 for val in tid_2[-2:]]
+std_2[-2:] = [val / 100 for val in std_2[-2:]]
+
 ax2.errorbar(x_2, tid_2, yerr=std_2, fmt="-s", color="forestgreen", 
              ecolor="dimgray", elinewidth=1.2, 
              markersize=6, markerfacecolor="white", markeredgecolor="forestgreen", markeredgewidth=1.5,
